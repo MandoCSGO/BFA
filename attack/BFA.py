@@ -109,8 +109,14 @@ class BFA(object):
                     output = model(data)
                     self.loss_dict[name] = self.criterion(output,
                                                           target).item()
+
                     # change the weight back to the clean weight
                     module.weight.data = clean_weight
+
+            if not self.loss_dict:
+                raise ValueError("Error: loss_dict is empty before calling max(). Check loss calculations!")
+
+            print(f"Debug: loss_dict contents = {self.loss_dict}")
 
             # after going through all the layer, now we find the layer with max loss
             max_loss_module = max(self.loss_dict.items(),

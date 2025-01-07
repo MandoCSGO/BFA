@@ -9,3 +9,5 @@ from .quan_alexnet_imagenet import alexnet_quan
 
 from .quan_mobilenet_imagenet import mobilenet_v2_quan
 from .vanilla_models.vanilla_mobilenet_imagenet import mobilenet_v2
+
+from .vgg import vgg11_bn, vgg13_bn, vgg16_bn, vgg19_bn

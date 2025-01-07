@@ -27,7 +27,7 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
 parser.add_argument('--data_path',
-                    default='/home/elliot/data/pytorch/svhn/',
+                    default='/gpfs/mariana/home/yukoba/',
                     type=str,
                     help='Path to dataset')
 parser.add_argument(
@@ -379,9 +379,11 @@ def main():
             print_log("=> loading checkpoint '{}'".format(args.resume), log)
             checkpoint = torch.load(args.resume)
             if not (args.fine_tune):
-                args.start_epoch = checkpoint['epoch']
-                recorder = checkpoint['recorder']
-                optimizer.load_state_dict(checkpoint['optimizer'])
+                print_log("=> Warning: Checkpoint does not contain epoch or optimizer state!", log)
+                args.start_epoch = 0
+ #               args.start_epoch = checkpoint['epoch']
+ #               recorder = checkpoint['recorder']
+ #               optimizer.load_state_dict(checkpoint['optimizer'])
 
             state_tmp = net.state_dict()
             if 'state_dict' in checkpoint.keys():
@@ -553,7 +555,7 @@ def perform_attack(attacker, model, model_clean, train_loader, test_loader,
     # attempt to use the training data to conduct BFA
     for _, (data, target) in enumerate(train_loader):
         if args.use_cuda:
-            target = target.cuda(async=True)
+            target = target.cuda(non_blocking=True)
             data = data.cuda()
         # Override the target to prevent label leaking
         _, target = model(data).data.max(1)
@@ -637,7 +639,7 @@ def train(train_loader, model, criterion, optimizer, epoch, log):
 
         if args.use_cuda:
             target = target.cuda(
-                async=True
+                non_blocking=True
             )  # the copy will be asynchronous with respect to the host.
             input = input.cuda()
 
@@ -693,7 +695,7 @@ def validate(val_loader, model, criterion, log):
     with torch.no_grad():
         for i, (input, target) in enumerate(val_loader):
             if args.use_cuda:
-                target = target.cuda(async=True)
+                target = target.cuda(non_blocking=True)
                 input = input.cuda()
 
             # compute output
@@ -763,7 +765,7 @@ def accuracy(output, target, topk=(1, )):
 
         res = []
         for k in topk:
-            correct_k = correct[:k].view(-1).float().sum(0)
+            correct_k = correct[:k].reshape(-1).float().sum(0)
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
 

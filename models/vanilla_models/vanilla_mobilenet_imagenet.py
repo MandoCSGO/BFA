@@ -134,7 +134,7 @@ def mobilenet_v2(pretrained=True, **kwargs):
     """
     model = MobileNetV2(n_class=1000)
     if pretrained:
-        model_path = '/home/elliot/Documents/ICCV_2019_BFA/mobilenet_model/mobilenet_v2.pth.tar'
+        model_path = '/gpfs/mariana/home/yukoba/Neural_Network_Weight_Attack/mobilenet_cifar10.pth'
         pretrained_dict = torch.load(model_path)
         model_dict = model.state_dict()
         pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}
