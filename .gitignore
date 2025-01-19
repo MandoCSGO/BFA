@@ -6,3 +6,7 @@ benchmark/
 models/__pycache__/
 
 *.pyc
+
+vgg16_cifar100
+vgg16_cifar10
+*.pth
