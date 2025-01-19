@@ -1,0 +1,256 @@
+/gpfs/mariana/home/yukoba/Neural_Network_Weight_Attack/main.py:380: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(args.resume)
+save path : /gpfs/mariana/home/yukoba/Neural_Network_Weight_Attack/save/TEST
+{'data_path': '/gpfs/mariana/home/yukoba/pytorch-cifar10/cifar-10-batches-py', 'dataset': 'cifar10', 'arch': 'vgg16_quan', 'epochs': 200, 'optimizer': 'SGD', 'test_batch_size': 256, 'learning_rate': 0.001, 'momentum': 0.9, 'decay': 0.0001, 'schedule': [80, 120], 'gammas': [0.1, 0.1], 'print_freq': 50, 'save_path': '/gpfs/mariana/home/yukoba/Neural_Network_Weight_Attack/save/TEST', 'resume': 'vgg16_cifar10', 'start_epoch': 0, 'evaluate': False, 'fine_tune': False, 'model_only': False, 'ngpu': 0, 'gpu_id': 0, 'workers': 8, 'manualSeed': 2275, 'reset_weight': True, 'optimize_step': False, 'enable_bfa': True, 'attack_sample_size': 128, 'n_iter': 20, 'k_top': 10, 'use_cuda': False}
+Random Seed: 2275
+python version : 3.12.8 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:31:09) [GCC 11.2.0]
+torch  version : 2.5.1
+cudnn  version : 90100
+Files already downloaded and verified
+Files already downloaded and verified
+=> creating model 'vgg16_quan'
+=> network :
+ VGG(
+  (features): Sequential(
+    (0): quan_Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): ReLU(inplace=True)
+    (3): quan_Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (4): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (5): ReLU(inplace=True)
+    (6): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (7): quan_Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (8): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (9): ReLU(inplace=True)
+    (10): quan_Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (11): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (12): ReLU(inplace=True)
+    (13): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (14): quan_Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (15): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (16): ReLU(inplace=True)
+    (17): quan_Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (18): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (19): ReLU(inplace=True)
+    (20): quan_Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (21): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (22): ReLU(inplace=True)
+    (23): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (24): quan_Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (25): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (26): ReLU(inplace=True)
+    (27): quan_Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (28): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (29): ReLU(inplace=True)
+    (30): quan_Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (31): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (32): ReLU(inplace=True)
+    (33): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (34): quan_Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (35): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (36): ReLU(inplace=True)
+    (37): quan_Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (38): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (39): ReLU(inplace=True)
+    (40): quan_Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (41): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (42): ReLU(inplace=True)
+    (43): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  )
+  (classifier): Sequential(
+    (0): quan_Linear(in_features=512, out_features=4096, bias=True)
+    (1): ReLU(inplace=True)
+    (2): Dropout(p=0.5, inplace=False)
+    (3): quan_Linear(in_features=4096, out_features=4096, bias=True)
+    (4): ReLU(inplace=True)
+    (5): Dropout(p=0.5, inplace=False)
+    (6): quan_Linear(in_features=4096, out_features=10, bias=True)
+  )
+)
+using SGD as optimizer
+=> loading checkpoint 'vgg16_cifar10'
+=> Warning: Checkpoint does not contain epoch or optimizer state!
+=> loaded checkpoint 'vgg16_cifar10' (epoch 0)
+  **Test** Prec@1 93.660 Prec@5 99.780 Error@1 6.340
+k_top is set to 10
+Attack sample size is 128
+**********************************
+Debug: loss_dict contents = {'features.0': 0.015633227303624153, 'features.3': 0.0038965940475463867, 'features.7': 0.007372575346380472, 'features.10': 0.0032020865473896265, 'features.14': 0.005057895556092262, 'features.17': 0.006253954488784075, 'features.20': 0.0030242556240409613, 'features.24': 0.0021637440659105778, 'features.27': 0.001508265733718872, 'features.30': 0.0014520942931994796, 'features.34': 0.0014465228887274861, 'features.37': 0.0014283902710303664, 'features.40': 0.0014430561568588018, 'classifier.0': 0.0014230140950530767, 'classifier.3': 0.0014171797083690763, 'classifier.6': 0.0014732001582160592}
+Iteration: [001/020]   Attack Time 6.133 (6.133)  [2025-01-19 18:25:15]
+loss before attack: 0.0014
+loss after attack: 0.0156
+bit flips: 1
+hamming_dist: 1
+  **Test** Prec@1 93.230 Prec@5 99.710 Error@1 6.770
+iteration Time 27.894 (27.894)
+**********************************
+Debug: loss_dict contents = {'features.0': 0.09011213481426239, 'features.3': 0.028098193928599358, 'features.7': 0.0307041984051466, 'features.10': 0.025739753618836403, 'features.14': 0.03081664629280567, 'features.17': 0.0315355621278286, 'features.20': 0.024134300649166107, 'features.24': 0.018799152225255966, 'features.27': 0.0162536408752203, 'features.30': 0.01591341942548752, 'features.34': 0.01574246771633625, 'features.37': 0.015732701867818832, 'features.40': 0.015866240486502647, 'classifier.0': 0.015691962093114853, 'classifier.3': 0.01564031094312668, 'classifier.6': 0.015852827578783035}
+Iteration: [002/020]   Attack Time 5.939 (6.036)  [2025-01-19 18:25:49]
+loss before attack: 0.0156
+loss after attack: 0.0901
+bit flips: 2
+hamming_dist: 2
+  **Test** Prec@1 91.820 Prec@5 99.590 Error@1 8.180
+iteration Time 25.727 (26.810)
+**********************************
+Debug: loss_dict contents = {'features.0': 0.25763243436813354, 'features.3': 0.15074792504310608, 'features.7': 0.13418076932430267, 'features.10': 0.10121630877256393, 'features.14': 0.09572973102331161, 'features.17': 0.10261814296245575, 'features.20': 0.09856510162353516, 'features.24': 0.09147250652313232, 'features.27': 0.09163544327020645, 'features.30': 0.0908646360039711, 'features.34': 0.09045060724020004, 'features.37': 0.09031422436237335, 'features.40': 0.09061659127473831, 'classifier.0': 0.09019146114587784, 'classifier.3': 0.090123251080513, 'classifier.6': 0.09079010039567947}
+Iteration: [003/020]   Attack Time 6.302 (6.125)  [2025-01-19 18:26:21]
+loss before attack: 0.0901
+loss after attack: 0.2576
+bit flips: 3
+hamming_dist: 3
+  **Test** Prec@1 89.360 Prec@5 99.390 Error@1 10.640
+iteration Time 26.452 (26.691)
+**********************************
+Debug: loss_dict contents = {'features.0': 0.2719261646270752, 'features.3': 0.3133451044559479, 'features.7': 0.30428048968315125, 'features.10': 0.2740768492221832, 'features.14': 0.2879592776298523, 'features.17': 0.27343928813934326, 'features.20': 0.2652953267097473, 'features.24': 0.2617664337158203, 'features.27': 0.2590829133987427, 'features.30': 0.2584174871444702, 'features.34': 0.25821179151535034, 'features.37': 0.2579748332500458, 'features.40': 0.25829482078552246, 'classifier.0': 0.2576799988746643, 'classifier.3': 0.25765305757522583, 'classifier.6': 0.25873446464538574}
+Iteration: [004/020]   Attack Time 5.957 (6.083)  [2025-01-19 18:26:53]
+loss before attack: 0.2576
+loss after attack: 0.3133
+bit flips: 4
+hamming_dist: 4
+  **Test** Prec@1 86.900 Prec@5 98.960 Error@1 13.100
+iteration Time 25.282 (26.338)
+**********************************
+Debug: loss_dict contents = {'features.0': 0.46381494402885437, 'features.3': 0.5828038454055786, 'features.7': 0.3814222812652588, 'features.10': 0.3289283514022827, 'features.14': 0.33862125873565674, 'features.17': 0.33153244853019714, 'features.20': 0.32356148958206177, 'features.24': 0.3162615895271301, 'features.27': 0.31463712453842163, 'features.30': 0.3139813542366028, 'features.34': 0.31385713815689087, 'features.37': 0.3136405348777771, 'features.40': 0.31382831931114197, 'classifier.0': 0.3134004473686218, 'classifier.3': 0.3133672773838043, 'classifier.6': 0.3138839602470398}
+Iteration: [005/020]   Attack Time 5.898 (6.046)  [2025-01-19 18:27:25]
+loss before attack: 0.3133
+loss after attack: 0.5828
+bit flips: 5
+hamming_dist: 5
+  **Test** Prec@1 78.640 Prec@5 96.350 Error@1 21.360
+iteration Time 27.320 (26.535)
+**********************************
+Debug: loss_dict contents = {'features.0': 1.1879069805145264, 'features.3': 1.140292763710022, 'features.7': 1.0077265501022339, 'features.10': 0.6388938426971436, 'features.14': 0.6770524382591248, 'features.17': 0.6096304059028625, 'features.20': 0.5999448895454407, 'features.24': 0.5860673189163208, 'features.27': 0.5851967930793762, 'features.30': 0.5836696028709412, 'features.34': 0.5844184160232544, 'features.37': 0.5836402177810669, 'features.40': 0.5840718150138855, 'classifier.0': 0.5829004049301147, 'classifier.3': 0.5828628540039062, 'classifier.6': 0.5840237736701965}
+Iteration: [006/020]   Attack Time 5.993 (6.037)  [2025-01-19 18:27:58]
+loss before attack: 0.5828
+loss after attack: 1.1879
+bit flips: 6
+hamming_dist: 6
+  **Test** Prec@1 67.770 Prec@5 92.180 Error@1 32.230
+iteration Time 26.167 (26.474)
+**********************************
+Debug: loss_dict contents = {'features.0': 1.889023780822754, 'features.3': 2.0205719470977783, 'features.7': 1.650476098060608, 'features.10': 1.3173736333847046, 'features.14': 1.4084980487823486, 'features.17': 1.2346163988113403, 'features.20': 1.2104929685592651, 'features.24': 1.1998454332351685, 'features.27': 1.191009521484375, 'features.30': 1.1900863647460938, 'features.34': 1.189847707748413, 'features.37': 1.1898930072784424, 'features.40': 1.1898677349090576, 'classifier.0': 1.1881043910980225, 'classifier.3': 1.1879842281341553, 'classifier.6': 1.1904953718185425}
+Iteration: [007/020]   Attack Time 6.610 (6.119)  [2025-01-19 18:28:31]
+loss before attack: 1.1879
+loss after attack: 2.0206
+bit flips: 7
+hamming_dist: 7
+  **Test** Prec@1 56.420 Prec@5 87.230 Error@1 43.580
+iteration Time 25.616 (26.351)
+**********************************
+Debug: loss_dict contents = {'features.0': 2.6048405170440674, 'features.3': 2.681741714477539, 'features.7': 2.384758234024048, 'features.10': 2.3234763145446777, 'features.14': 2.413747787475586, 'features.17': 2.071523427963257, 'features.20': 2.077091693878174, 'features.24': 2.0340218544006348, 'features.27': 2.026864528656006, 'features.30': 2.0232207775115967, 'features.34': 2.0233991146087646, 'features.37': 2.0242867469787598, 'features.40': 2.0227482318878174, 'classifier.0': 2.020925998687744, 'classifier.3': 2.0206830501556396, 'classifier.6': 2.0242152214050293}
+Iteration: [008/020]   Attack Time 5.911 (6.093)  [2025-01-19 18:29:02]
+loss before attack: 2.0206
+loss after attack: 2.6817
+bit flips: 8
+hamming_dist: 8
+  **Test** Prec@1 46.600 Prec@5 82.200 Error@1 53.400
+iteration Time 26.324 (26.348)
+**********************************
+Debug: loss_dict contents = {'features.0': 3.231179714202881, 'features.3': 3.022651433944702, 'features.7': 3.9214720726013184, 'features.10': 3.311796188354492, 'features.14': 2.947941303253174, 'features.17': 2.838000774383545, 'features.20': 2.720775604248047, 'features.24': 2.6993606090545654, 'features.27': 2.691621780395508, 'features.30': 2.68593692779541, 'features.34': 2.685241460800171, 'features.37': 2.687615394592285, 'features.40': 2.687288522720337, 'classifier.0': 2.682241916656494, 'classifier.3': 2.6818997859954834, 'classifier.6': 2.6868181228637695}
+Iteration: [009/020]   Attack Time 5.904 (6.072)  [2025-01-19 18:29:34]
+loss before attack: 2.6817
+loss after attack: 3.9215
+bit flips: 9
+hamming_dist: 9
+  **Test** Prec@1 34.820 Prec@5 74.170 Error@1 65.180
+iteration Time 25.647 (26.270)
+**********************************
+Debug: loss_dict contents = {'features.0': 4.086916446685791, 'features.3': 4.042448043823242, 'features.7': 4.422914505004883, 'features.10': 4.619211673736572, 'features.14': 4.185660362243652, 'features.17': 4.189259052276611, 'features.20': 4.177587032318115, 'features.24': 4.016325950622559, 'features.27': 3.9535629749298096, 'features.30': 3.9256789684295654, 'features.34': 3.929832935333252, 'features.37': 3.926647901535034, 'features.40': 3.93202805519104, 'classifier.0': 3.9222118854522705, 'classifier.3': 3.921694755554199, 'classifier.6': 3.9334967136383057}
+Iteration: [010/020]   Attack Time 5.876 (6.052)  [2025-01-19 18:30:06]
+loss before attack: 3.9215
+loss after attack: 4.6192
+bit flips: 10
+hamming_dist: 10
+  **Test** Prec@1 33.910 Prec@5 74.290 Error@1 66.090
+iteration Time 26.054 (26.248)
+**********************************
+Debug: loss_dict contents = {'features.0': 4.916996955871582, 'features.3': 4.778963088989258, 'features.7': 5.063716411590576, 'features.10': 5.096884250640869, 'features.14': 4.879589080810547, 'features.17': 4.7757463455200195, 'features.20': 4.85506534576416, 'features.24': 4.718597412109375, 'features.27': 4.65509557723999, 'features.30': 4.625960350036621, 'features.34': 4.631657123565674, 'features.37': 4.623819828033447, 'features.40': 4.634394645690918, 'classifier.0': 4.620203495025635, 'classifier.3': 4.619385242462158, 'classifier.6': 4.635706901550293}
+Iteration: [011/020]   Attack Time 6.390 (6.083)  [2025-01-19 18:30:38]
+loss before attack: 4.6192
+loss after attack: 5.0969
+bit flips: 11
+hamming_dist: 11
+  **Test** Prec@1 29.150 Prec@5 71.370 Error@1 70.850
+iteration Time 27.012 (26.318)
+**********************************
+Debug: loss_dict contents = {'features.0': 5.307624816894531, 'features.3': 5.2680888175964355, 'features.7': 4.865917205810547, 'features.10': 5.401886940002441, 'features.14': 5.307878017425537, 'features.17': 5.357731819152832, 'features.20': 5.4453935623168945, 'features.24': 5.183414459228516, 'features.27': 5.127225875854492, 'features.30': 5.10708475112915, 'features.34': 5.110447883605957, 'features.37': 5.102882385253906, 'features.40': 5.11681604385376, 'classifier.0': 5.098208427429199, 'classifier.3': 5.097101211547852, 'classifier.6': 5.119503974914551}
+Iteration: [012/020]   Attack Time 6.123 (6.086)  [2025-01-19 18:31:12]
+loss before attack: 5.0969
+loss after attack: 5.4454
+bit flips: 12
+hamming_dist: 12
+  **Test** Prec@1 28.740 Prec@5 71.540 Error@1 71.260
+iteration Time 25.395 (26.241)
+**********************************
+Debug: loss_dict contents = {'features.0': 5.738977909088135, 'features.3': 5.67366361618042, 'features.7': 5.33027458190918, 'features.10': 5.762703895568848, 'features.14': 5.6151604652404785, 'features.17': 5.666971206665039, 'features.20': 5.634543418884277, 'features.24': 5.529415130615234, 'features.27': 5.473843574523926, 'features.30': 5.454807281494141, 'features.34': 5.459637641906738, 'features.37': 5.451857089996338, 'features.40': 5.467036724090576, 'classifier.0': 5.446810722351074, 'classifier.3': 5.445625305175781, 'classifier.6': 5.469057083129883}
+Iteration: [013/020]   Attack Time 6.028 (6.082)  [2025-01-19 18:31:43]
+loss before attack: 5.4454
+loss after attack: 5.7627
+bit flips: 13
+hamming_dist: 13
+  **Test** Prec@1 27.230 Prec@5 71.760 Error@1 72.770
+iteration Time 25.788 (26.206)
+**********************************
+Debug: loss_dict contents = {'features.0': 5.811232089996338, 'features.3': 5.821296215057373, 'features.7': 5.045042991638184, 'features.10': 6.02567720413208, 'features.14': 5.93503475189209, 'features.17': 5.9810404777526855, 'features.20': 6.042288780212402, 'features.24': 5.881723880767822, 'features.27': 5.816481590270996, 'features.30': 5.773643970489502, 'features.34': 5.774880409240723, 'features.37': 5.768990516662598, 'features.40': 5.785637855529785, 'classifier.0': 5.7641472816467285, 'classifier.3': 5.762937545776367, 'classifier.6': 5.785648345947266}
+Iteration: [014/020]   Attack Time 5.891 (6.068)  [2025-01-19 18:32:15]
+loss before attack: 5.7627
+loss after attack: 6.0423
+bit flips: 14
+hamming_dist: 14
+  **Test** Prec@1 27.110 Prec@5 71.800 Error@1 72.890
+iteration Time 25.537 (26.158)
+**********************************
+Debug: loss_dict contents = {'features.0': 6.181617259979248, 'features.3': 6.165627479553223, 'features.7': 5.928767681121826, 'features.10': 6.194421768188477, 'features.14': 6.223514080047607, 'features.17': 6.236062526702881, 'features.20': 6.410528659820557, 'features.24': 6.153604030609131, 'features.27': 6.103285789489746, 'features.30': 6.054335594177246, 'features.34': 6.056364059448242, 'features.37': 6.048704147338867, 'features.40': 6.066220760345459, 'classifier.0': 6.043797016143799, 'classifier.3': 6.042538166046143, 'classifier.6': 6.066709041595459}
+Iteration: [015/020]   Attack Time 6.246 (6.080)  [2025-01-19 18:32:46]
+loss before attack: 6.0423
+loss after attack: 6.4105
+bit flips: 15
+hamming_dist: 15
+  **Test** Prec@1 26.680 Prec@5 72.350 Error@1 73.320
+iteration Time 24.328 (26.036)
+**********************************
+Debug: loss_dict contents = {'features.0': 6.638659477233887, 'features.3': 6.627410888671875, 'features.7': 6.321908950805664, 'features.10': 6.634954929351807, 'features.14': 6.568689346313477, 'features.17': 6.586850166320801, 'features.20': 6.6616902351379395, 'features.24': 6.5043816566467285, 'features.27': 6.45711612701416, 'features.30': 6.427866458892822, 'features.34': 6.429481029510498, 'features.37': 6.417320728302002, 'features.40': 6.4369330406188965, 'classifier.0': 6.4122090339660645, 'classifier.3': 6.411050319671631, 'classifier.6': 6.437891006469727}
+Iteration: [016/020]   Attack Time 5.907 (6.069)  [2025-01-19 18:33:17]
+loss before attack: 6.4105
+loss after attack: 6.6617
+bit flips: 16
+hamming_dist: 16
+  **Test** Prec@1 26.180 Prec@5 72.540 Error@1 73.820
+iteration Time 26.476 (26.064)
+**********************************
+Debug: loss_dict contents = {'features.0': 6.860353946685791, 'features.3': 6.862850666046143, 'features.7': 6.616453647613525, 'features.10': 6.876430034637451, 'features.14': 6.831690788269043, 'features.17': 6.81783390045166, 'features.20': 6.764564514160156, 'features.24': 6.77331018447876, 'features.27': 6.701941013336182, 'features.30': 6.685791492462158, 'features.34': 6.68529748916626, 'features.37': 6.670012474060059, 'features.40': 6.6898112297058105, 'classifier.0': 6.663501739501953, 'classifier.3': 6.662272930145264, 'classifier.6': 6.691132068634033}
+Iteration: [017/020]   Attack Time 5.784 (6.052)  [2025-01-19 18:33:49]
+loss before attack: 6.6617
+loss after attack: 6.8764
+bit flips: 17
+hamming_dist: 17
+  **Test** Prec@1 26.160 Prec@5 72.070 Error@1 73.840
+iteration Time 26.329 (26.079)
+**********************************
+Debug: loss_dict contents = {'features.0': 7.188208103179932, 'features.3': 7.114135265350342, 'features.7': 7.063302516937256, 'features.10': 6.965681552886963, 'features.14': 7.032756805419922, 'features.17': 7.045991897583008, 'features.20': 6.985143184661865, 'features.24': 6.967464923858643, 'features.27': 6.914842128753662, 'features.30': 6.898915767669678, 'features.34': 6.901267051696777, 'features.37': 6.885447025299072, 'features.40': 6.903858661651611, 'classifier.0': 6.87819766998291, 'classifier.3': 6.8770060539245605, 'classifier.6': 6.905876159667969}
+Iteration: [018/020]   Attack Time 6.109 (6.056)  [2025-01-19 18:34:21]
+loss before attack: 6.8764
+loss after attack: 7.1882
+bit flips: 18
+hamming_dist: 18
+  **Test** Prec@1 21.040 Prec@5 68.360 Error@1 78.960
+iteration Time 24.341 (25.983)
+**********************************
+Debug: loss_dict contents = {'features.0': 7.341651916503906, 'features.3': 7.212867736816406, 'features.7': 6.880415439605713, 'features.10': 7.426923751831055, 'features.14': 7.450116157531738, 'features.17': 7.350338935852051, 'features.20': 7.349254608154297, 'features.24': 7.363285541534424, 'features.27': 7.256415843963623, 'features.30': 7.2303147315979, 'features.34': 7.217460632324219, 'features.37': 7.197547435760498, 'features.40': 7.217949390411377, 'classifier.0': 7.190131187438965, 'classifier.3': 7.188840866088867, 'classifier.6': 7.220455646514893}
+Iteration: [019/020]   Attack Time 6.086 (6.057)  [2025-01-19 18:34:52]
+loss before attack: 7.1882
+loss after attack: 7.4501
+bit flips: 19
+hamming_dist: 19
+  **Test** Prec@1 20.930 Prec@5 68.260 Error@1 79.070
+iteration Time 25.073 (25.935)
+**********************************
+Debug: loss_dict contents = {'features.0': 7.5046868324279785, 'features.3': 7.581096649169922, 'features.7': 7.360413074493408, 'features.10': 7.4723944664001465, 'features.14': 7.671260356903076, 'features.17': 7.576990127563477, 'features.20': 7.610015392303467, 'features.24': 7.594432830810547, 'features.27': 7.517123699188232, 'features.30': 7.487381458282471, 'features.34': 7.4801926612854, 'features.37': 7.460263252258301, 'features.40': 7.481441974639893, 'classifier.0': 7.452163219451904, 'classifier.3': 7.45077657699585, 'classifier.6': 7.483067512512207}
+Iteration: [020/020]   Attack Time 7.016 (6.105)  [2025-01-19 18:35:24]
+loss before attack: 7.4501
+loss after attack: 7.6713
+bit flips: 20
+hamming_dist: 20
+  **Test** Prec@1 20.540 Prec@5 66.620 Error@1 79.460
+iteration Time 26.382 (25.957)

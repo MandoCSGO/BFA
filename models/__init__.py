@@ -11,3 +11,7 @@ from .quan_mobilenet_imagenet import mobilenet_v2_quan
 from .vanilla_models.vanilla_mobilenet_imagenet import mobilenet_v2
 
 from .vgg import vgg11_bn, vgg13_bn, vgg16_bn, vgg19_bn
+
+
+from .quan_vgg import vgg11_quan, vgg13_quan, vgg16_quan, vgg19_quan
+from .quan_mobilenet import mobilenet_quan

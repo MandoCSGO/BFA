@@ -1,7 +1,0 @@
-save path : /gpfs/mariana/home/yukoba/Neural_Network_Weight_Attack/save/TEST
-{'data_path': '/gpfs/mariana/home/yukoba/pytorch-cifar10/cifar-10-batches-py', 'dataset': 'cifar10', 'arch': 'mobilenet_v2', 'epochs': 200, 'optimizer': 'SGD', 'test_batch_size': 256, 'learning_rate': 0.001, 'momentum': 0.9, 'decay': 0.0001, 'schedule': [80, 120], 'gammas': [0.1, 0.1], 'print_freq': 50, 'save_path': '/gpfs/mariana/home/yukoba/Neural_Network_Weight_Attack/save/TEST', 'resume': '', 'start_epoch': 0, 'evaluate': False, 'fine_tune': False, 'model_only': False, 'ngpu': 1, 'gpu_id': 0, 'workers': 8, 'manualSeed': 5250, 'reset_weight': True, 'optimize_step': False, 'enable_bfa': True, 'attack_sample_size': 128, 'n_iter': 20, 'k_top': 10, 'use_cuda': False}
-Random Seed: 5250
-python version : 3.12.8 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:31:09) [GCC 11.2.0]
-torch  version : 2.5.1
-cudnn  version : 90100
-=> creating model 'mobilenet_v2'
