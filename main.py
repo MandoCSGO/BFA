@@ -10,7 +10,7 @@ import torchvision.transforms as transforms
 from utils import AverageMeter, RecorderMeter, time_string, convert_secs2time
 from tensorboardX import SummaryWriter
 import models
-from models.quantization import quan_Conv2d, quan_Linear, quantize
+from models.quantization import quan_Conv2d, quan_HardenedConv2d, quan_Linear, quantize
 
 from attack.BFA import *
 import torch.nn.functional as F
@@ -377,6 +377,7 @@ def main():
     if args.resume:
         if os.path.isfile(args.resume):
             print_log("=> loading checkpoint '{}'".format(args.resume), log)
+            #checkpoint = torch.load(args.resume,map_location=torch.device('cpu'))
             checkpoint = torch.load(args.resume)
             if not (args.fine_tune):
                 print_log("=> Warning: Checkpoint does not contain epoch or optimizer state!", log)
@@ -405,7 +406,7 @@ def main():
 
     # update the step_size once the model is loaded. This is used for quantization.
     for m in net.modules():
-        if isinstance(m, quan_Conv2d) or isinstance(m, quan_Linear):
+        if isinstance(m, quan_Conv2d) or isinstance(m, quan_HardenedConv2d) or isinstance(m, quan_Linear):
             # simple step size update based on the pretrained model or weight init
             m.__reset_stepsize__()
 
@@ -418,7 +419,7 @@ def main():
                                          nesterov=True)
 
         for m in net.modules():
-            if isinstance(m, quan_Conv2d) or isinstance(m, quan_Linear):
+            if isinstance(m, quan_Conv2d) or isinstance(m, quan_HardenedConv2d) or isinstance(m, quan_Linear):
                 for i in range(
                         300
                 ):  # runs 200 iterations to reduce quantization error
@@ -432,7 +433,7 @@ def main():
                     optimizer_quan.step()
 
         for m in net.modules():
-            if isinstance(m, quan_Conv2d):
+            if isinstance(m, quan_Conv2d) or isinstance(m, quan_HardenedConv2d):
                 print(m.step_size.data.item(),
                       (m.step_size.detach() * m.half_lvls).item(),
                       m.weight.max().item())
@@ -440,7 +441,7 @@ def main():
     # block for weight reset
     if args.reset_weight:
         for m in net.modules():
-            if isinstance(m, quan_Conv2d) or isinstance(m, quan_Linear):
+            if isinstance(m, quan_Conv2d) or isinstance(m, quan_HardenedConv2d) or isinstance(m, quan_Linear):
                 m.__reset_weight__()
                 # print(m.weight)
 

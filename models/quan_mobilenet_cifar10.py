@@ -47,14 +47,14 @@ class BasicConv2d(nn.Module):
 
 class MobileNet(nn.Module):
 
-    def __init__(self, width_multiplier=1, class_num=100):
+    def __init__(self, width_multiplier=1, class_num=10):
         super().__init__()
         alpha = width_multiplier
         self.stem = nn.Sequential(
             BasicConv2d(3, int(32 * alpha), 3, padding=1, bias=False),
             DepthSeperableConv2d(
-                int(32 * alpha),
-                int(64 * alpha),
+                int(32),
+                int(64),
                 3,
                 padding=1,
                 bias=False
@@ -64,16 +64,16 @@ class MobileNet(nn.Module):
         # downsample
         self.conv1 = nn.Sequential(
             DepthSeperableConv2d(
-                int(64 * alpha),
-                int(128 * alpha),
+                int(64),
+                int(128),
                 3,
                 stride=2,
                 padding=1,
                 bias=False
             ),
             DepthSeperableConv2d(
-                int(128 * alpha),
-                int(128 * alpha),
+                int(128),
+                int(128),
                 3,
                 padding=1,
                 bias=False
@@ -83,16 +83,16 @@ class MobileNet(nn.Module):
         # downsample
         self.conv2 = nn.Sequential(
             DepthSeperableConv2d(
-                int(128 * alpha),
-                int(256 * alpha),
+                int(128),
+                int(256),
                 3,
                 stride=2,
                 padding=1,
                 bias=False
             ),
             DepthSeperableConv2d(
-                int(256 * alpha),
-                int(256 * alpha),
+                int(256),
+                int(256),
                 3,
                 padding=1,
                 bias=False
@@ -102,8 +102,8 @@ class MobileNet(nn.Module):
         # downsample
         self.conv3 = nn.Sequential(
             DepthSeperableConv2d(
-                int(256 * alpha),
-                int(512 * alpha),
+                int(256),
+                int(512),
                 3,
                 stride=2,
                 padding=1,
@@ -121,23 +121,23 @@ class MobileNet(nn.Module):
         # downsample
         self.conv4 = nn.Sequential(
             DepthSeperableConv2d(
-                int(512 * alpha),
-                int(1024 * alpha),
+                int(512),
+                int(1024),
                 3,
                 stride=2,
                 padding=1,
                 bias=False
             ),
             DepthSeperableConv2d(
-                int(1024 * alpha),
-                int(1024 * alpha),
+                int(1024),
+                int(1024),
                 3,
                 padding=1,
                 bias=False
             )
         )
 
-        self.fc = quan_Linear(int(1024 * alpha), class_num)
+        self.fc = quan_Linear(int(1024), class_num)
         self.avg = nn.AdaptiveAvgPool2d(1)
 
     def forward(self, x):
@@ -152,5 +152,5 @@ class MobileNet(nn.Module):
         return x
 
 
-def mobilenet_quan(alpha=1, class_num=100):
+def mobilenet_quan_cifar10(alpha=1, class_num=10):
     return MobileNet(alpha, class_num)
