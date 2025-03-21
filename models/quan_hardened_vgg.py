@@ -19,10 +19,10 @@ class HardenedVGG(nn.Module):
 
         self.classifier = nn.Sequential(
             quan_Linear(512, 512),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.Dropout(),
             quan_Linear(512, 512),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.Dropout(),
             quan_Linear(512, num_class)
         )
@@ -47,7 +47,7 @@ def make_hardened_layers(cfg, batch_norm=False):
         if batch_norm:
             layers += [nn.BatchNorm2d(l)]
         
-        layers += [nn.ReLU(inplace=True)]
+        layers += [nn.ReLU(inplace=False)]
         input_channel = l
     
     return nn.Sequential(*layers)

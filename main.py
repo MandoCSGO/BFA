@@ -11,6 +11,10 @@ from utils import AverageMeter, RecorderMeter, time_string, convert_secs2time
 from tensorboardX import SummaryWriter
 import models
 from models.quantization import quan_Conv2d, quan_HardenedConv2d, quan_Linear, quantize
+import torch.nn as nn
+from typing import Dict, Union, Any
+from torch.utils.data import DataLoader
+import logging
 
 from attack.BFA import *
 import torch.nn.functional as F
@@ -178,6 +182,82 @@ cudnn.benchmark = True
 ###############################################################################
 ###############################################################################
 
+class RangerReLU(nn.ReLU):
+    def __init__(self, *args, **kwargs):
+        super(RangerReLU, self).__init__(*args, **kwargs)
+        self.clipping_threshold = 6
+
+    def forward(self,
+                input_activation: torch.tensor) -> torch.tensor:
+        out_activation = torch.ones_like(input_activation) * input_activation
+        out_activation[torch.gt(input_activation, self.clipping_threshold)] = torch.tensor(0.0)
+        out_activation = super(RangerReLU, self).forward(input_activation)
+       
+        return out_activation
+   
+    def __repr__(self):
+        base_repr = super().__repr__()
+        return f"{base_repr[:-1]}, threshold={self.clipping_threshold})"
+
+def relu_replacement(model: nn.Module, relu_thresholds: dict, name: str = '') -> nn.Module:
+    for name1, layer in model.named_children():
+        full_name = name + name1
+        if isinstance(layer, nn.ReLU):
+            if full_name in relu_thresholds:
+                threshold = relu_thresholds[full_name].item()
+            else:
+                threshold = 6  # Default threshold if not specified
+            hardened_relu = hardening_relu(layer, threshold)
+            setattr(model, name1, hardened_relu)
+        else:
+            relu_replacement(layer, relu_thresholds, full_name + '.')
+    return model
+
+def hardening_relu(relu: nn.ReLU, threshold: float) -> RangerReLU:
+    hardened_relu = RangerReLU(inplace=relu.inplace)
+    hardened_relu.clipping_threshold = threshold
+    return hardened_relu
+
+def Ranger_thresholds(model: nn.Module, 
+                      dataloader: torch.utils.data.DataLoader, 
+                      device: Union[torch.device, str],
+                      log) -> dict:
+    """
+    Extract clipping thresholds from RangerReLU layers in the model.
+    """
+    model.eval()
+    thresholds = {}
+    activations = {}
+
+    def relu_hook(module, input, output):
+        activations[module] = torch.max(output).item()
+
+    # Register hooks on all RangerReLU layers
+    for name, module in model.named_modules():
+        if isinstance(module, RangerReLU):
+            module.register_forward_hook(relu_hook)
+
+    print_log("=> Extracting thresholds using Ranger", log)
+
+    # Iterate through the dataloader to process batches
+    for data, _ in dataloader:
+        data = data.to(device)
+        with torch.no_grad():
+            _ = model(data)
+
+        # Update thresholds based on the collected activations
+        for module, max_val in activations.items():
+            module_name = str(module)
+            if module_name not in thresholds:
+                thresholds[module_name] = max_val
+            else:
+                thresholds[module_name] = max(thresholds[module_name], max_val)
+
+    print_log("=> Thresholds derived based on Ranger", log)
+    for key, value in thresholds.items():
+        print_log(f"Extracted threshold from {key}: {value}", log)
+
+    return thresholds
 
 def main():
     # Init logger6
@@ -373,12 +453,17 @@ def main():
 
     recorder = RecorderMeter(args.epochs)  # count number of epoches
 
+    relu_thresholds = Ranger_thresholds(net, train_loader, torch.device('cpu'), log)
+    #relu_thresholds = Ranger_thresholds(net, train_loader, torch.device('gpu'), log)
+
+    net = relu_replacement(net, relu_thresholds)
+
     # optionally resume from a checkpoint
     if args.resume:
         if os.path.isfile(args.resume):
             print_log("=> loading checkpoint '{}'".format(args.resume), log)
-            #checkpoint = torch.load(args.resume,map_location=torch.device('cpu'))
-            checkpoint = torch.load(args.resume)
+            checkpoint = torch.load(args.resume,map_location=torch.device('cpu'))
+            #checkpoint = torch.load(args.resume)
             if not (args.fine_tune):
                 print_log("=> Warning: Checkpoint does not contain epoch or optimizer state!", log)
                 args.start_epoch = 0
