@@ -453,8 +453,8 @@ def main():
 
     recorder = RecorderMeter(args.epochs)  # count number of epoches
 
-    relu_thresholds = Ranger_thresholds(net, train_loader, torch.device('cpu'), log)
-    #relu_thresholds = Ranger_thresholds(net, train_loader, torch.device('gpu'), log)
+    #relu_thresholds = Ranger_thresholds(net, train_loader, torch.device('cpu'), log)
+    relu_thresholds = Ranger_thresholds(net, train_loader, torch.device("cuda" if torch.cuda.is_available() else "cpu"), log)
 
     net = relu_replacement(net, relu_thresholds)
 
@@ -462,8 +462,8 @@ def main():
     if args.resume:
         if os.path.isfile(args.resume):
             print_log("=> loading checkpoint '{}'".format(args.resume), log)
-            checkpoint = torch.load(args.resume,map_location=torch.device('cpu'))
-            #checkpoint = torch.load(args.resume)
+            #checkpoint = torch.load(args.resume,map_location=torch.device('cpu'))
+            checkpoint = torch.load(args.resume)
             if not (args.fine_tune):
                 print_log("=> Warning: Checkpoint does not contain epoch or optimizer state!", log)
                 args.start_epoch = 0
