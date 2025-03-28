@@ -104,6 +104,7 @@ parser.add_argument('--evaluate',
                     dest='evaluate',
                     action='store_true',
                     help='evaluate model on validation set')
+parser.add_argument('--hardened', action='store_true', help='Enable hardened mode')
 parser.add_argument(
     '--fine_tune',
     dest='fine_tune',
@@ -453,10 +454,11 @@ def main():
 
     recorder = RecorderMeter(args.epochs)  # count number of epoches
 
-    #relu_thresholds = Ranger_thresholds(net, train_loader, torch.device('cpu'), log)
-    relu_thresholds = Ranger_thresholds(net, train_loader, torch.device("cuda" if torch.cuda.is_available() else "cpu"), log)
+    if args.hardened:
+        #relu_thresholds = Ranger_thresholds(net, train_loader, torch.device('cpu'), log)
+        relu_thresholds = Ranger_thresholds(net, train_loader, torch.device("cuda" if torch.cuda.is_available() else "cpu"), log)
 
-    net = relu_replacement(net, relu_thresholds)
+        net = relu_replacement(net, relu_thresholds)
 
     # optionally resume from a checkpoint
     if args.resume:
