@@ -460,6 +460,8 @@ def main():
 
         net = relu_replacement(net, relu_thresholds)
 
+        print_log("=> network :\n {}".format(net), log)
+
     # optionally resume from a checkpoint
     if args.resume:
         if os.path.isfile(args.resume):
