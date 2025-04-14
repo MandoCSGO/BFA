@@ -4,7 +4,7 @@ from torch.autograd import Variable
 from torchvision import models
 import torch.nn.functional as F
 
-HARDENING_RATIO = 0.05
+HARDENING_RATIO = 0.1
 N_BITS = 8
 
 class _quantize_func(torch.autograd.Function):

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from .quantization import quan_HardenedConv2d, quan_Linear
 
-HARDENING_RATIO = 0.05
+HARDENING_RATIO = 0.1
 N_BITS = 8
 
 cfg = {

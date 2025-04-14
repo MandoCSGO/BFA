@@ -7,10 +7,11 @@ import torch
 import torch.backends.cudnn as cudnn
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
-from utils import AverageMeter, RecorderMeter, time_string, convert_secs2time
+from utils import AverageMeter, RecorderMeter, time_string, convert_secs2time, print_log
 from tensorboardX import SummaryWriter
 import models
 from models.quantization import quan_Conv2d, quan_HardenedConv2d, quan_Linear, quantize
+from Fault_Injection import weights_FI_simulation
 import torch.nn as nn
 from typing import Dict, Union, Any
 from torch.utils.data import DataLoader
@@ -105,6 +106,17 @@ parser.add_argument('--evaluate',
                     action='store_true',
                     help='evaluate model on validation set')
 parser.add_argument('--hardened', action='store_true', help='Enable hardened mode')
+parser.add_argument('--fault_injection',
+                    action='store_true',
+                    help='Enable custom fault injection simulation instead of BFA')
+parser.add_argument('--repetition_count',
+                    type=int,
+                    default=10,
+                    help='Number of times to repeat fault injection simulation')
+parser.add_argument('--ber',
+                    type=float,
+                    default=1e-5,
+                    help='Bit error rate for fault injection simulation')
 parser.add_argument(
     '--fine_tune',
     dest='fine_tune',
@@ -538,7 +550,23 @@ def main():
     net_clean = copy.deepcopy(net)
     # weight_conversion(net)
 
-    if args.enable_bfa:
+    if args.fault_injection:
+        print_log("=> Running custom weight fault injection simulation", log)
+
+        device = torch.device("cuda" if args.use_cuda else "cpu")
+
+        weights_FI_simulation(
+            model=net,
+            dataloader=test_loader,
+            repetition_count=args.repetition_count,
+            BER=args.ber,
+            classes_count=num_classes,
+            device=device,
+            logger=log
+        )
+        return  # Exit after simulation
+
+    elif args.enable_bfa:
         perform_attack(attacker, net, net_clean, train_loader, test_loader,
                        args.n_iter, log, writer)
         return
@@ -803,12 +831,6 @@ def validate(val_loader, model, criterion, log):
             .format(top1=top1, top5=top5, error1=100 - top1.avg), log)
 
     return top1.avg, top5.avg, losses.avg
-
-
-def print_log(print_string, log):
-    print("{}".format(print_string))
-    log.write('{}\n'.format(print_string))
-    log.flush()
 
 
 def save_checkpoint(state, is_best, save_path, filename, log):

@@ -6,6 +6,12 @@ import matplotlib.pyplot as plt
 from torch import nn
 
 
+def print_log(print_string, log):
+    print("{}".format(print_string))
+    log.write('{}\n'.format(print_string))
+    log.flush()
+
+
 class AverageMeter(object):
     """Computes and stores the average and current value"""
 
